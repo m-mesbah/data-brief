@@ -4,9 +4,9 @@ import {
   Box,
   Paper,
   Typography,
-  Grid2,
   Button,
 } from '@mui/material';
+import Grid2 from '@mui/material/Grid2';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { organizationApi } from '../../api/organization';
 import type { Organization } from '../../utils/types';

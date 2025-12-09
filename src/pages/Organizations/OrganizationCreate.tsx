@@ -6,9 +6,9 @@ import {
   TextField,
   Button,
   Typography,
-  Grid2,
   Alert,
 } from '@mui/material';
+import Grid2 from '@mui/material/Grid2';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { organizationApi } from '../../api/organization';
 import { ROUTES } from '../../utils/constants';

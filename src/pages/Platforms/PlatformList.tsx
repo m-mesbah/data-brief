@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import {
   Box,
   Paper,
-  Grid2,
   Card,
   CardContent,
   Typography,
   Button,
 } from '@mui/material';
+import Grid2 from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 import { platformApi } from '../../api/platform';
 import type { Platform } from '../../utils/types';
