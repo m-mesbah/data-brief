@@ -7,7 +7,6 @@ import {
   Button,
   Chip,
 } from '@mui/material';
-import Grid2 from '@mui/material/Grid2';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { integrationApi } from '../../api/integration';
 import type { Integration } from '../../utils/types';
@@ -66,34 +65,40 @@ export const IntegrationDetail: React.FC = () => {
           />
         </Box>
 
-        <Grid2 container spacing={3}>
-          <Grid2 xs={12} sm={6}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 3,
+          }}
+        >
+          <Box>
             <Typography variant="body2" color="textSecondary">
               Platform ID
             </Typography>
             <Typography variant="body1" gutterBottom>
               {integration.platformId}
             </Typography>
-          </Grid2>
-          <Grid2 xs={12} sm={6}>
+          </Box>
+          <Box>
             <Typography variant="body2" color="textSecondary">
               Domain ID
             </Typography>
             <Typography variant="body1" gutterBottom>
               {integration.domainId}
             </Typography>
-          </Grid2>
+          </Box>
           {integration.createdAt && (
-            <Grid2 xs={12} sm={6}>
+            <Box>
               <Typography variant="body2" color="textSecondary">
                 Created At
               </Typography>
               <Typography variant="body1" gutterBottom>
                 {formatDate(integration.createdAt)}
               </Typography>
-            </Grid2>
+            </Box>
           )}
-        </Grid2>
+        </Box>
       </Paper>
     </Box>
   );

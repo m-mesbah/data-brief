@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
 } from '@mui/material';
-import Grid2 from '@mui/material/Grid2';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { platformApi } from '../../api/platform';
 import type { Platform } from '../../utils/types';
@@ -59,32 +58,39 @@ export const PlatformDetail: React.FC = () => {
           {platform.name}
         </Typography>
 
-        <Grid2 container spacing={3} sx={{ mt: 1 }}>
-          <Grid2 xs={12}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 3,
+            mt: 1,
+          }}
+        >
+          <Box sx={{ gridColumn: { xs: '1', sm: '1 / -1' } }}>
             <Typography variant="body2" color="textSecondary">
               Description
             </Typography>
             <Typography variant="body1" paragraph>
               {platform.description}
             </Typography>
-          </Grid2>
-          <Grid2 xs={12} sm={6}>
+          </Box>
+          <Box>
             <Typography variant="body2" color="textSecondary">
               Created At
             </Typography>
             <Typography variant="body1" gutterBottom>
               {formatDate(platform.createdAt)}
             </Typography>
-          </Grid2>
-          <Grid2 xs={12} sm={6}>
+          </Box>
+          <Box>
             <Typography variant="body2" color="textSecondary">
               Updated At
             </Typography>
             <Typography variant="body1" gutterBottom>
               {formatDate(platform.updatedAt)}
             </Typography>
-          </Grid2>
-        </Grid2>
+          </Box>
+        </Box>
       </Paper>
     </Box>
   );

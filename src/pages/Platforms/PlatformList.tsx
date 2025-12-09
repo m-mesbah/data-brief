@@ -7,7 +7,6 @@ import {
   Typography,
   Button,
 } from '@mui/material';
-import Grid2 from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 import { platformApi } from '../../api/platform';
 import type { Platform } from '../../utils/types';
@@ -47,42 +46,47 @@ export const PlatformList: React.FC = () => {
         Platforms
       </Typography>
 
-      <Grid2 container spacing={3} sx={{ mt: 2 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+          gap: 3,
+          mt: 2,
+        }}
+      >
         {platforms.length === 0 ? (
-          <Grid2 xs={12}>
+          <Box sx={{ gridColumn: '1 / -1' }}>
             <Paper sx={{ p: 3, textAlign: 'center' }}>
               <Typography color="textSecondary">No platforms found</Typography>
             </Paper>
-          </Grid2>
+          </Box>
         ) : (
           platforms.map((platform) => (
-            <Grid2 xs={12} sm={6} md={4} key={platform.id}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {platform.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" paragraph>
-                    {platform.description}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    Created: {formatDate(platform.createdAt)}
-                  </Typography>
-                  <Box mt={2}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => navigate(ROUTES.PLATFORM_DETAIL(platform.id))}
-                    >
-                      View Details
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid2>
+            <Card key={platform.id}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  {platform.name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" paragraph>
+                  {platform.description}
+                </Typography>
+                <Typography variant="caption" color="textSecondary">
+                  Created: {formatDate(platform.createdAt)}
+                </Typography>
+                <Box mt={2}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => navigate(ROUTES.PLATFORM_DETAIL(platform.id))}
+                  >
+                    View Details
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
           ))
         )}
-      </Grid2>
+      </Box>
     </Box>
   );
 };

@@ -8,7 +8,6 @@ import {
   Typography,
   Alert,
 } from '@mui/material';
-import Grid2 from '@mui/material/Grid2';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { organizationApi } from '../../api/organization';
 import { ROUTES } from '../../utils/constants';
@@ -72,8 +71,14 @@ export const OrganizationCreate: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <Grid2 container spacing={2}>
-            <Grid2 xs={12}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+              gap: 2,
+            }}
+          >
+            <Box sx={{ gridColumn: { xs: '1', sm: '1 / -1' } }}>
               <TextField
                 required
                 fullWidth
@@ -84,8 +89,8 @@ export const OrganizationCreate: React.FC = () => {
                 onChange={handleChange}
                 disabled={loading}
               />
-            </Grid2>
-            <Grid2 xs={12} sm={6}>
+            </Box>
+            <Box>
               <TextField
                 required
                 fullWidth
@@ -97,8 +102,8 @@ export const OrganizationCreate: React.FC = () => {
                 disabled={loading}
                 helperText="Enter organization type ID"
               />
-            </Grid2>
-            <Grid2 xs={12} sm={6}>
+            </Box>
+            <Box>
               <TextField
                 required
                 fullWidth
@@ -110,8 +115,8 @@ export const OrganizationCreate: React.FC = () => {
                 disabled={loading}
                 helperText="Enter number of employees"
               />
-            </Grid2>
-          </Grid2>
+            </Box>
+          </Box>
           <Box mt={3}>
             <Button
               type="submit"

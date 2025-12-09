@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
 } from '@mui/material';
-import Grid2 from '@mui/material/Grid2';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { organizationApi } from '../../api/organization';
 import type { Organization } from '../../utils/types';
@@ -59,44 +58,50 @@ export const OrganizationDetail: React.FC = () => {
           <Typography variant="h4">{organization.name}</Typography>
         </Box>
 
-        <Grid2 container spacing={3}>
-          <Grid2 xs={12} sm={6}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 3,
+          }}
+        >
+          <Box>
             <Typography variant="body2" color="textSecondary">
               Type
             </Typography>
             <Typography variant="body1" gutterBottom>
               {organization.type}
             </Typography>
-          </Grid2>
-          <Grid2 xs={12} sm={6}>
+          </Box>
+          <Box>
             <Typography variant="body2" color="textSecondary">
               Size
             </Typography>
             <Typography variant="body1" gutterBottom>
               {organization.size}
             </Typography>
-          </Grid2>
+          </Box>
           {organization.createdAt && (
-            <Grid2 xs={12} sm={6}>
+            <Box>
               <Typography variant="body2" color="textSecondary">
                 Created At
               </Typography>
               <Typography variant="body1" gutterBottom>
                 {formatDate(organization.createdAt)}
               </Typography>
-            </Grid2>
+            </Box>
           )}
           {organization.updatedAt && (
-            <Grid2 xs={12} sm={6}>
+            <Box>
               <Typography variant="body2" color="textSecondary">
                 Updated At
               </Typography>
               <Typography variant="body1" gutterBottom>
                 {formatDate(organization.updatedAt)}
               </Typography>
-            </Grid2>
+            </Box>
           )}
-        </Grid2>
+        </Box>
       </Paper>
     </Box>
   );
