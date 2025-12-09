@@ -25,18 +25,41 @@ export const Verification: React.FC = () => {
   useEffect(() => {
     const verifyMagicLink = async () => {
       try {
-        const oobCode = searchParams.get('oobCode');
-        const email = searchParams.get('email') || localStorage.getItem('emailForSignIn');
+        // Firebase email links can have different parameter names
+        // Try multiple possible parameter names
+        const oobCode = 
+          searchParams.get('oobCode') || 
+          searchParams.get('oobcode') || 
+          searchParams.get('code') ||
+          new URLSearchParams(window.location.hash.substring(1)).get('oobCode') ||
+          new URLSearchParams(window.location.hash.substring(1)).get('code');
+        
+        const email = 
+          searchParams.get('email') || 
+          new URLSearchParams(window.location.hash.substring(1)).get('email') ||
+          localStorage.getItem('emailForSignIn');
 
         console.log('🔐 Starting Firebase verification...');
         console.log('📧 Email:', email);
         console.log('🔑 oobCode:', oobCode);
+        console.log('🔗 Full URL:', window.location.href);
+        console.log('🔗 Search params:', window.location.search);
+        console.log('🔗 Hash:', window.location.hash);
 
-        if (!oobCode || !email) {
-          console.error('❌ Missing required parameters');
-          setError('Invalid verification link. Missing required parameters.');
+        if (!oobCode) {
+          console.error('❌ Missing oobCode parameter');
+          setError('Invalid verification link. Missing verification code.');
           setStatus('error');
-          showToast('Invalid verification link', 'error');
+          showToast('Invalid verification link - missing code', 'error');
+          setTimeout(() => navigate(ROUTES.LOGIN), 3000);
+          return;
+        }
+
+        if (!email) {
+          console.error('❌ Missing email parameter');
+          setError('Invalid verification link. Please try logging in again.');
+          setStatus('error');
+          showToast('Invalid verification link - missing email', 'error');
           setTimeout(() => navigate(ROUTES.LOGIN), 3000);
           return;
         }
@@ -104,14 +127,19 @@ export const Verification: React.FC = () => {
 
         // Handle specific Firebase errors
         if (err instanceof Error) {
-          if (err.message?.includes('INVALID_OOB_CODE')) {
-            errorMessage = 'This link has expired or has already been used';
-          } else if (err.message?.includes('INVALID_EMAIL')) {
-            errorMessage = 'Invalid email address';
-          } else if (err.message?.includes('USER_DISABLED')) {
-            errorMessage = 'This account has been disabled';
+          const errorMsg = err.message || '';
+          if (errorMsg.includes('INVALID_OOB_CODE') || errorMsg.includes('EXPIRED_OOB_CODE')) {
+            errorMessage = 'This link has expired or has already been used. Please request a new magic link.';
+          } else if (errorMsg.includes('INVALID_EMAIL')) {
+            errorMessage = 'Invalid email address. Please try logging in again.';
+          } else if (errorMsg.includes('USER_DISABLED')) {
+            errorMessage = 'This account has been disabled. Please contact support.';
+          } else if (errorMsg.includes('EMAIL_NOT_FOUND')) {
+            errorMessage = 'Email not found. Please sign up first.';
+          } else if (errorMsg.includes('INVALID_ID_TOKEN')) {
+            errorMessage = 'Invalid token. Please try logging in again.';
           } else {
-            errorMessage = err.message;
+            errorMessage = errorMsg || 'Verification failed. Please try again.';
           }
         }
 
@@ -174,7 +202,7 @@ export const Verification: React.FC = () => {
               <Alert severity="error" sx={{ mb: 2, textAlign: 'left' }}>
                 {error || 'An error occurred during verification.'}
               </Alert>
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Button
                   variant="outlined"
                   onClick={() => navigate(ROUTES.LOGIN)}
@@ -183,9 +211,16 @@ export const Verification: React.FC = () => {
                 </Button>
                 <Button
                   variant="contained"
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    const email = localStorage.getItem('emailForSignIn');
+                    if (email) {
+                      navigate(ROUTES.LOGIN);
+                    } else {
+                      navigate(ROUTES.LOGIN);
+                    }
+                  }}
                 >
-                  Try Again
+                  Request New Link
                 </Button>
               </Box>
             </>
