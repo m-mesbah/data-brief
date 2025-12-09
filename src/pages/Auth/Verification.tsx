@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -21,16 +21,18 @@ export const Verification: React.FC = () => {
   const { showToast } = useToast();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [error, setError] = useState<string | null>(null);
-  const [hasVerified, setHasVerified] = useState(false);
+  const isVerifyingRef = useRef(false);
+  const hasCompletedRef = useRef(false);
 
   useEffect(() => {
-    // Prevent running verification multiple times
-    if (hasVerified || status === 'success') {
+    // Prevent running verification multiple times using refs (more reliable than state)
+    if (isVerifyingRef.current || hasCompletedRef.current) {
+      console.log('⏭️ Skipping verification - already in progress or completed');
       return;
     }
 
     const verifyMagicLink = async () => {
-      setHasVerified(true);
+      isVerifyingRef.current = true;
       try {
         // Firebase email links can have different parameter names
         // Try multiple possible parameter names
@@ -116,8 +118,9 @@ export const Verification: React.FC = () => {
           console.error('❌ Firebase error:', errorData);
           const errorMessage = errorData.error?.message || 'Verification failed';
           
-          // Reset hasVerified so user can try again
-          setHasVerified(false);
+          // Mark as completed so we don't retry
+          hasCompletedRef.current = true;
+          isVerifyingRef.current = false;
           throw new Error(errorMessage);
         }
 
@@ -127,6 +130,10 @@ export const Verification: React.FC = () => {
         if (data.idToken) {
           console.log('🎟️ Firebase ID token obtained');
           console.log('📦 Response data:', data);
+
+          // Mark as completed immediately to prevent retries
+          hasCompletedRef.current = true;
+          isVerifyingRef.current = false;
 
           // Update auth context (this will store token and user data)
           setFirebaseUserFromRest(data.localId, data.email || email, data.idToken);
@@ -148,40 +155,52 @@ export const Verification: React.FC = () => {
         } else {
           console.error('❌ No token in response');
           console.error('📦 Full response:', data);
+          hasCompletedRef.current = true;
+          isVerifyingRef.current = false;
           throw new Error('No token received from Firebase');
         }
       } catch (err: unknown) {
         console.error('❌ Verification error:', err);
-        setStatus('error');
+        
+        // Only set error state if we haven't already succeeded
+        if (!hasCompletedRef.current || status !== 'success') {
+          setStatus('error');
+          isVerifyingRef.current = false;
 
-        let errorMessage = 'Verification failed';
+          let errorMessage = 'Verification failed';
 
-        // Handle specific Firebase errors
-        if (err instanceof Error) {
-          const errorMsg = err.message || '';
-          if (errorMsg.includes('INVALID_OOB_CODE') || errorMsg.includes('EXPIRED_OOB_CODE')) {
-            errorMessage = 'This link has expired or has already been used. Please request a new magic link.';
-          } else if (errorMsg.includes('INVALID_EMAIL')) {
-            errorMessage = 'Invalid email address. Please try logging in again.';
-          } else if (errorMsg.includes('USER_DISABLED')) {
-            errorMessage = 'This account has been disabled. Please contact support.';
-          } else if (errorMsg.includes('EMAIL_NOT_FOUND')) {
-            errorMessage = 'Email not found. Please sign up first.';
-          } else if (errorMsg.includes('INVALID_ID_TOKEN')) {
-            errorMessage = 'Invalid token. Please try logging in again.';
-          } else {
-            errorMessage = errorMsg || 'Verification failed. Please try again.';
+          // Handle specific Firebase errors
+          if (err instanceof Error) {
+            const errorMsg = err.message || '';
+            if (errorMsg.includes('INVALID_OOB_CODE') || errorMsg.includes('EXPIRED_OOB_CODE')) {
+              errorMessage = 'This link has expired or has already been used. Please request a new magic link.';
+            } else if (errorMsg.includes('INVALID_EMAIL')) {
+              errorMessage = 'Invalid email address. Please try logging in again.';
+            } else if (errorMsg.includes('USER_DISABLED')) {
+              errorMessage = 'This account has been disabled. Please contact support.';
+            } else if (errorMsg.includes('EMAIL_NOT_FOUND')) {
+              errorMessage = 'Email not found. Please sign up first.';
+            } else if (errorMsg.includes('INVALID_ID_TOKEN')) {
+              errorMessage = 'Invalid token. Please try logging in again.';
+            } else {
+              errorMessage = errorMsg || 'Verification failed. Please try again.';
+            }
           }
-        }
 
-        setError(errorMessage);
-        showToast(errorMessage, 'error');
+          setError(errorMessage);
+          showToast(errorMessage, 'error');
+        }
         // Don't auto-redirect on error, let user click the button
       }
     };
 
     verifyMagicLink();
-  }, [searchParams, navigate, setFirebaseUserFromRest, showToast, hasVerified, status]);
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Don't reset refs here as we want to prevent re-running
+    };
+  }, []); // Empty dependency array - only run once on mount
 
   return (
     <Container maxWidth="sm">
