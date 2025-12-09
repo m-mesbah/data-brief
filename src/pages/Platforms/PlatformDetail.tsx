@@ -4,7 +4,7 @@ import {
   Box,
   Paper,
   Typography,
-  Grid,
+  Grid2,
   Button,
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
@@ -59,32 +59,32 @@ export const PlatformDetail: React.FC = () => {
           {platform.name}
         </Typography>
 
-        <Grid container spacing={3} sx={{ mt: 1 }}>
-          <Grid item xs={12}>
+        <Grid2 container spacing={3} sx={{ mt: 1 }}>
+          <Grid2 xs={12}>
             <Typography variant="body2" color="textSecondary">
               Description
             </Typography>
             <Typography variant="body1" paragraph>
               {platform.description}
             </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Grid2>
+          <Grid2 xs={12} sm={6}>
             <Typography variant="body2" color="textSecondary">
               Created At
             </Typography>
             <Typography variant="body1" gutterBottom>
               {formatDate(platform.createdAt)}
             </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Grid2>
+          <Grid2 xs={12} sm={6}>
             <Typography variant="body2" color="textSecondary">
               Updated At
             </Typography>
             <Typography variant="body1" gutterBottom>
               {formatDate(platform.updatedAt)}
             </Typography>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Paper>
     </Box>
   );

@@ -6,7 +6,7 @@ import {
   TextField,
   Button,
   Typography,
-  Grid,
+  Grid2,
   Alert,
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
@@ -72,8 +72,8 @@ export const OrganizationCreate: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid2 container spacing={2}>
+            <Grid2 xs={12}>
               <TextField
                 required
                 fullWidth
@@ -84,8 +84,8 @@ export const OrganizationCreate: React.FC = () => {
                 onChange={handleChange}
                 disabled={loading}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </Grid2>
+            <Grid2 xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
@@ -97,8 +97,8 @@ export const OrganizationCreate: React.FC = () => {
                 disabled={loading}
                 helperText="Enter organization type ID"
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </Grid2>
+            <Grid2 xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
@@ -110,8 +110,8 @@ export const OrganizationCreate: React.FC = () => {
                 disabled={loading}
                 helperText="Enter number of employees"
               />
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
           <Box mt={3}>
             <Button
               type="submit"

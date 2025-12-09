@@ -4,9 +4,8 @@ import {
   Box,
   Paper,
   Typography,
-  Grid,
+  Grid2,
   Button,
-  Chip,
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { organizationApi } from '../../api/organization';
@@ -60,44 +59,44 @@ export const OrganizationDetail: React.FC = () => {
           <Typography variant="h4">{organization.name}</Typography>
         </Box>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid2 container spacing={3}>
+          <Grid2 xs={12} sm={6}>
             <Typography variant="body2" color="textSecondary">
               Type
             </Typography>
             <Typography variant="body1" gutterBottom>
               {organization.type}
             </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Grid2>
+          <Grid2 xs={12} sm={6}>
             <Typography variant="body2" color="textSecondary">
               Size
             </Typography>
             <Typography variant="body1" gutterBottom>
               {organization.size}
             </Typography>
-          </Grid>
+          </Grid2>
           {organization.createdAt && (
-            <Grid item xs={12} sm={6}>
+            <Grid2 xs={12} sm={6}>
               <Typography variant="body2" color="textSecondary">
                 Created At
               </Typography>
               <Typography variant="body1" gutterBottom>
                 {formatDate(organization.createdAt)}
               </Typography>
-            </Grid>
+            </Grid2>
           )}
           {organization.updatedAt && (
-            <Grid item xs={12} sm={6}>
+            <Grid2 xs={12} sm={6}>
               <Typography variant="body2" color="textSecondary">
                 Updated At
               </Typography>
               <Typography variant="body1" gutterBottom>
                 {formatDate(organization.updatedAt)}
               </Typography>
-            </Grid>
+            </Grid2>
           )}
-        </Grid>
+        </Grid2>
       </Paper>
     </Box>
   );

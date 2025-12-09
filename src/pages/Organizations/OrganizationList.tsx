@@ -12,7 +12,7 @@ import {
   Typography,
   IconButton,
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Visibility as ViewIcon } from '@mui/icons-material';
+import { Add as AddIcon, Visibility as ViewIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { organizationApi } from '../../api/organization';
 import type { Organization } from '../../utils/types';

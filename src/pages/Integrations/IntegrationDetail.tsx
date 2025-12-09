@@ -4,7 +4,7 @@ import {
   Box,
   Paper,
   Typography,
-  Grid,
+  Grid2,
   Button,
   Chip,
 } from '@mui/material';
@@ -66,34 +66,34 @@ export const IntegrationDetail: React.FC = () => {
           />
         </Box>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid2 container spacing={3}>
+          <Grid2 xs={12} sm={6}>
             <Typography variant="body2" color="textSecondary">
               Platform ID
             </Typography>
             <Typography variant="body1" gutterBottom>
               {integration.platformId}
             </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Grid2>
+          <Grid2 xs={12} sm={6}>
             <Typography variant="body2" color="textSecondary">
               Domain ID
             </Typography>
             <Typography variant="body1" gutterBottom>
               {integration.domainId}
             </Typography>
-          </Grid>
+          </Grid2>
           {integration.createdAt && (
-            <Grid item xs={12} sm={6}>
+            <Grid2 xs={12} sm={6}>
               <Typography variant="body2" color="textSecondary">
                 Created At
               </Typography>
               <Typography variant="body1" gutterBottom>
                 {formatDate(integration.createdAt)}
               </Typography>
-            </Grid>
+            </Grid2>
           )}
-        </Grid>
+        </Grid2>
       </Paper>
     </Box>
   );

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   Box,
   Paper,
-  Grid,
+  Grid2,
   Card,
   CardContent,
   Typography,
@@ -47,16 +47,16 @@ export const PlatformList: React.FC = () => {
         Platforms
       </Typography>
 
-      <Grid container spacing={3} sx={{ mt: 2 }}>
+      <Grid2 container spacing={3} sx={{ mt: 2 }}>
         {platforms.length === 0 ? (
-          <Grid item xs={12}>
+          <Grid2 xs={12}>
             <Paper sx={{ p: 3, textAlign: 'center' }}>
               <Typography color="textSecondary">No platforms found</Typography>
             </Paper>
-          </Grid>
+          </Grid2>
         ) : (
           platforms.map((platform) => (
-            <Grid item xs={12} sm={6} md={4} key={platform.id}>
+            <Grid2 xs={12} sm={6} md={4} key={platform.id}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
@@ -79,10 +79,10 @@ export const PlatformList: React.FC = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Grid2>
           ))
         )}
-      </Grid>
+      </Grid2>
     </Box>
   );
 };
