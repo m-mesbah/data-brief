@@ -45,6 +45,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Initialize auth state from localStorage first (for REST API auth)
+  useEffect(() => {
+    const storedToken = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
+    
+    if (storedToken && storedUser) {
+      try {
+        const userData = JSON.parse(storedUser) as User;
+        setToken(storedToken);
+        setUser(userData);
+        console.log('✅ Restored auth state from localStorage');
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.USER);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     // Listen for Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -71,15 +90,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(userData);
         } catch (error) {
           console.error('Error getting ID token:', error);
-          setUser(null);
-          setToken(null);
+          // Only clear if we don't have a valid token from REST API
+          const storedToken = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+          if (!storedToken) {
+            setUser(null);
+            setToken(null);
+          }
         }
       } else {
-        // User is signed out
-        setUser(null);
-        setToken(null);
-        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-        localStorage.removeItem(STORAGE_KEYS.USER);
+        // User is signed out from Firebase Auth SDK
+        // But don't clear if we have a valid token from REST API
+        const storedToken = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+        if (!storedToken) {
+          // Only clear if there's no stored token (REST API auth)
+          setUser(null);
+          setToken(null);
+          localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+          localStorage.removeItem(STORAGE_KEYS.USER);
+        } else {
+          console.log('⚠️ Firebase Auth SDK shows no user, but REST API token exists - keeping auth state');
+        }
       }
       setLoading(false);
     });

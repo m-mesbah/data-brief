@@ -21,9 +21,16 @@ export const Verification: React.FC = () => {
   const { showToast } = useToast();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [error, setError] = useState<string | null>(null);
+  const [hasVerified, setHasVerified] = useState(false);
 
   useEffect(() => {
+    // Prevent running verification multiple times
+    if (hasVerified || status === 'success') {
+      return;
+    }
+
     const verifyMagicLink = async () => {
+      setHasVerified(true);
       try {
         // Firebase email links can have different parameter names
         // Try multiple possible parameter names
@@ -107,7 +114,11 @@ export const Verification: React.FC = () => {
         if (!response.ok) {
           const errorData = await response.json();
           console.error('❌ Firebase error:', errorData);
-          throw new Error(errorData.error?.message || 'Verification failed');
+          const errorMessage = errorData.error?.message || 'Verification failed';
+          
+          // Reset hasVerified so user can try again
+          setHasVerified(false);
+          throw new Error(errorMessage);
         }
 
         const data = await response.json();
@@ -115,6 +126,7 @@ export const Verification: React.FC = () => {
 
         if (data.idToken) {
           console.log('🎟️ Firebase ID token obtained');
+          console.log('📦 Response data:', data);
 
           // Update auth context (this will store token and user data)
           setFirebaseUserFromRest(data.localId, data.email || email, data.idToken);
@@ -122,15 +134,20 @@ export const Verification: React.FC = () => {
           // Clear the email from storage
           localStorage.removeItem('emailForSignIn');
 
+          // Wait a bit to ensure state is updated before redirecting
           setStatus('success');
           showToast('Signed in successfully!', 'success');
 
+          // Give React time to update the auth context before navigating
           setTimeout(() => {
             console.log('🔄 Redirecting to dashboard...');
-            navigate(ROUTES.DASHBOARD);
-          }, 1000);
+            console.log('🔐 Token stored:', !!localStorage.getItem('auth_token'));
+            console.log('👤 User stored:', !!localStorage.getItem('user'));
+            navigate(ROUTES.DASHBOARD, { replace: true });
+          }, 1500);
         } else {
           console.error('❌ No token in response');
+          console.error('📦 Full response:', data);
           throw new Error('No token received from Firebase');
         }
       } catch (err: unknown) {
@@ -159,12 +176,12 @@ export const Verification: React.FC = () => {
 
         setError(errorMessage);
         showToast(errorMessage, 'error');
-        setTimeout(() => navigate(ROUTES.LOGIN), 3000);
+        // Don't auto-redirect on error, let user click the button
       }
     };
 
     verifyMagicLink();
-  }, [searchParams, navigate, setFirebaseUserFromRest, showToast]);
+  }, [searchParams, navigate, setFirebaseUserFromRest, showToast, hasVerified, status]);
 
   return (
     <Container maxWidth="sm">
