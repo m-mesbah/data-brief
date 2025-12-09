@@ -34,14 +34,28 @@ export const Verification: React.FC = () => {
           new URLSearchParams(window.location.hash.substring(1)).get('oobCode') ||
           new URLSearchParams(window.location.hash.substring(1)).get('code');
         
-        const email = 
+        // Get email from URL and decode it (email might be URL encoded like %40 for @)
+        let email = 
           searchParams.get('email') || 
           new URLSearchParams(window.location.hash.substring(1)).get('email') ||
           localStorage.getItem('emailForSignIn');
+        
+        // Decode URL-encoded email if needed
+        if (email) {
+          email = decodeURIComponent(email);
+        }
+
+        // Get API key from URL if available, otherwise use env variable
+        const apiKeyFromUrl = searchParams.get('apiKey');
+        const firebaseApiKey = apiKeyFromUrl || FIREBASE_API_KEY;
+
+        const mode = searchParams.get('mode'); // signIn, verifyEmail, etc.
 
         console.log('🔐 Starting Firebase verification...');
         console.log('📧 Email:', email);
         console.log('🔑 oobCode:', oobCode);
+        console.log('🔑 Mode:', mode);
+        console.log('🔑 API Key from URL:', apiKeyFromUrl ? 'Yes' : 'No');
         console.log('🔗 Full URL:', window.location.href);
         console.log('🔗 Search params:', window.location.search);
         console.log('🔗 Hash:', window.location.hash);
@@ -64,7 +78,7 @@ export const Verification: React.FC = () => {
           return;
         }
 
-        if (!FIREBASE_API_KEY) {
+        if (!firebaseApiKey) {
           console.error('❌ Firebase API key not configured');
           setError('Firebase API key not configured. Please check your environment variables.');
           setStatus('error');
@@ -73,7 +87,7 @@ export const Verification: React.FC = () => {
         }
 
         // Use Firebase REST API to sign in with email link
-        const firebaseAuthUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithEmailLink?key=${FIREBASE_API_KEY}`;
+        const firebaseAuthUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithEmailLink?key=${firebaseApiKey}`;
 
         console.log('📡 Calling Firebase API...');
 
